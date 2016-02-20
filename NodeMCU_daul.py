@@ -4,8 +4,13 @@ import serial
 import time
 
 def sendLine(outstring):
-	ser.write(outstring+"\r")
-	ser.flush()
+	ser.write(outstring+"\r\n")
+def wfp():							# wait for prompt
+	line=ser.read()
+	while(line[-2:]!="> "):
+		#print("\""+line+"\"")
+		#print("\""+line[-2:]+"\"")
+		line+=ser.read()
 
 if __name__ == "__main__":
 	#get Command Line Arguments
@@ -25,6 +30,7 @@ if __name__ == "__main__":
 	try:	# to open file
 		f=open(args.file, "rw")
 		name=args.file.split("/")[-1].split("\\")[-1]	# extract name from file path (Linux and Windows compatible)
+		print(name)
 		content=f.read()								# read content to string
 		length=len(content)								# get file length
 	except:
@@ -38,18 +44,19 @@ if __name__ == "__main__":
 	
 	if(args.upload):
 		sendLine("file.open(\""+name+"\", \"w\")")		# open file on ESP
-		ser.write("file.write(string.char(")			# begin to write to file
-		
-		i=0
-		for c in content:								# write byte for byte in ASCII decimal
-			ser.write(str(ord(c)))
-			if i < (length-1): 
-				ser.write(",")
-			i+=1
-
-		sendLine("))")									# end writing to file
+		wfp()
+		sendLine("foo=\"\"")
+		wfp()
+		sendLine("f = function(val) foo=foo..string.char(val) end")
+		wfp()
+		for c in content:
+			sendLine("f("+str(ord(c))+")")
+			wfp()
+		sendLine("file.write(foo)")
+		wfp()
 		sendLine("file.flush();file.close()")			# flush and close file on ESP
-
+		wfp()
+		#print("file.flush();file.close()")
 	#close everything
-	ser.write("uart.setup( 0, 9600, 8, 0, 1, 1)\n")
+	sendLine("uart.setup( 0, 9600, 8, 0, 1, 1)")
 	f.close()
