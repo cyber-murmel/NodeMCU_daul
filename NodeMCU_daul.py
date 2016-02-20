@@ -10,12 +10,12 @@ def sendLine(outstring):
 if __name__ == "__main__":
 	#get Command Line Arguments
 	parser = argparse.ArgumentParser(description='Down and upload files from and to an ESP8266 running NodeMCU. Createt by MarBle.')
-	parser.add_argument("-f", "--file"		, type=str									, help='filepath to read from or write to')
-	parser.add_argument("-d", "--download"	, action="store_true"						, help='downloads file from the ESP to your computer')
-	parser.add_argument("-u", "--upload"	, action="store_true"						, help='uploads file from your computer to the ESP')
-	parser.add_argument("-v", "--verbose"	, action="store_true"						, help='print the serial communication to the terminal')
-	parser.add_argument("-b", "--baud"		, type=int				, default = 9600	, help='change the baud rate')
-	parser.add_argument("-s", "--serial"	, type=str									, help='path to serial device')
+	parser.add_argument("-f", "--file", type=str, help='filepath to read from or write to')
+	parser.add_argument("-d", "--download", action="store_true", help='downloads file from the ESP to your computer')
+	parser.add_argument("-u", "--upload", action="store_true", help='uploads file from your computer to the ESP')
+	parser.add_argument("-v", "--verbose", action="store_true", help='print the serial communication to the terminal')
+	parser.add_argument("-b", "--baud", type=int, default = 9600	, help='change the baud rate')
+	parser.add_argument("-s", "--serial", type=str, help='path to serial device')
 	args = parser.parse_args()
 	#only allow either up or downloading
 	if not (args.upload^args.download):
