@@ -35,10 +35,6 @@ if __name__ == "__main__":
 	#### asserting ####
 	try: # to open file
 		f=open(args.file, "rw")
-		name=args.file.split("/")[-1].split("\\")[-1]	# extract name from file path (Linux and Windows compatible)
-		print(name)
-		content=f.read()								# read content to string
-		length=len(content)								# get file length
 	except:
 		print("Can't open file."); exit()
 
@@ -48,27 +44,27 @@ if __name__ == "__main__":
 		sendLine("uart.setup( 0, "+str(args.baud)+", 8, 0, 1, 1)")
 		ser.close()
 		ser = serial.Serial(port=args.serial, baudrate=args.baud, bytesize=8, parity="N", stopbits=1)
-		time.sleep(1)
+		time.sleep(0.1)
 	except:
 		print("could not open serial"); exit()
 	
 
 	#### uploading ####
 	if(args.upload):
-		ser.reset_input_buffer()
-		sendLine("file.open(\""+name+"\", \"w\")")		# open file on ESP
+		name=args.file.split("/")[-1].split("\\")[-1]   # extract name from file path (Linux and Windows compatible)
+		content=f.read()                                # read content to string
+		ser.reset_input_buffer()                        # delete old prompt sign
+		sendLine("file.open(\""+name+"\", \"w\")")      # open file on ESP
 		waitForPrompt()
 		while(len(content)>0):
 			code=",".join(map(str,map(ord,list(content[:chunksize]))))
-			print(code)
 			content=content[chunksize:]
 			sendLine("file.write(string.char("+code+"))")
 			waitForPrompt()
-		sendLine("file.flush();file.close()")			# flush and close file on ESP
+		sendLine("file.flush();file.close()")           # flush and close file on ESP
 		waitForPrompt()
-		print("file.flush();file.close()")
-
 
 	#close everything
 	sendLine("uart.setup( 0, 9600, 8, 0, 1, 1)")
+	ser.close()
 	f.close()
