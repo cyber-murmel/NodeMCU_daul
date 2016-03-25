@@ -21,7 +21,7 @@ def changeBaud(ser, baud):
 	ser.close()								# close old connection
 	ser.baudrate=baud							# change baud rate
 	ser.open()								# reopen serial connection with requested baud rate
-	time.sleep(0.1)								# wait a little
+	time.sleep(0.5)								# wait a little
 
 def getArguments():
 	parser = argparse.ArgumentParser(description='Down and upload files from and to an ESP8266 running NodeMCU. Createt by MarBle.')
@@ -61,6 +61,7 @@ def main():
 		name=getFileNameFrompath(args.file)				# extract name from file path (Linux and Windows compatible)
 		content=f.read()						# read content to string
 		ser.reset_input_buffer()					# delete old prompt sign
+		sendLine(ser, "")
 		sendLine(ser, "file.open(\""+name+"\", \"w\")")			# open file on ESP
 		waitForPrompt(ser)
 		while(len(content)>0):						# repeat until all of the string is been sent
