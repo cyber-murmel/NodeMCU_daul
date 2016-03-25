@@ -72,7 +72,8 @@ def main():
 		waitForPrompt(ser)
 
 	#close everything
-	sendLine(ser, "uart.setup( 0, 9600, 8, 0, 1, 1)")			# reset UART speed
+	changeBaud(ser, 9600)							# reset UART speed
+	sendLine(ser, "")
 	waitForPrompt(ser)
 	ser.close()
 	f.close()
