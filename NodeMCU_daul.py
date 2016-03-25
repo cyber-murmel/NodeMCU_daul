@@ -3,7 +3,7 @@ import argparse
 import serial
 import time
 
-chunksize=56				# maximum chunk size possible
+chunksize=48				# maximum chunk size possible
 
 def getFileNameFrompath(path):
 	return path.split("/")[-1].split("\\")[-1]
@@ -73,6 +73,7 @@ def main():
 
 	#close everything
 	sendLine(ser, "uart.setup( 0, 9600, 8, 0, 1, 1)")			# reset UART speed
+	waitForPrompt(ser)
 	ser.close()
 	f.close()
 
